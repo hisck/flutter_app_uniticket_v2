@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter_app_uniticket_v2/cardapio_page.dart';
-import 'package:flutter_app_uniticket_v2/Compra_page.dart';
-import 'package:flutter_app_uniticket_v2/Transfer_page.dart';
-import 'package:flutter_app_uniticket_v2/Relatorios_page.dart';
-import 'package:flutter_app_uniticket_v2/payment_methods_page.dart';
-import 'package:flutter_app_uniticket_v2/HistoryPage.dart';
-import 'package:flutter_app_uniticket_v2/Transfer_page.dart';
-import 'package:flutter_app_uniticket_v2/Adicao_cardapio_page.dart';
+import 'package:flutter_app_uniticket_v2/pages/cardapio_page.dart';
+import 'package:flutter_app_uniticket_v2/pages/Compra_page.dart';
+import 'package:flutter_app_uniticket_v2/pages/HistoryPage.dart';
+import 'package:flutter_app_uniticket_v2/pages/payment_methods_page.dart';
+import 'package:flutter_app_uniticket_v2/pages/Relatorios_page.dart';
+import 'package:flutter_app_uniticket_v2/pages/Transfer_page.dart';
+import 'package:flutter_app_uniticket_v2/pages/Adicao_cardapio_page.dart';
+import 'package:flutter_app_uniticket_v2/pages/Home_page.dart';
 
 void main()=> runApp(new Uniticket());
 
@@ -15,103 +15,185 @@ class Uniticket extends StatelessWidget{
   @override
   Widget build(BuildContext context) {
     return new MaterialApp(
-      theme: new ThemeData(primarySwatch: Colors.lightBlue),
-      home: new HomePage(),
-      //routes: <String, WidgetBuilder>{
-        //"/a": (BuildContext context)=>new CardapioPage("Cardapio"),
-      //}
+      debugShowCheckedModeBanner: false,
+      routes: <String, WidgetBuilder> {
+        '/homepage': (BuildContext context) => new HomePage(),
+        '/compraticket' : (BuildContext context) => CompraPage(),
+      },
+      home: new LoginPage(),
+      theme: new ThemeData(
+        primarySwatch: Colors.blue
+      )
+    );
+  }
+}
+
+class LoginPage extends StatefulWidget{
+  @override
+  State createState() => new LoginPageState();
+}
+
+class LoginPageState extends State<LoginPage> with SingleTickerProviderStateMixin{
+
+  AnimationController _iconAnimationController;
+  Animation<double> _iconAnimation;
+
+  @override
+  void initState(){
+    super.initState();
+    _iconAnimationController = new AnimationController(
+      vsync: this,
+      duration: new Duration(milliseconds: 500)
+    );
+    _iconAnimation = new CurvedAnimation(
+        parent: _iconAnimationController,
+        curve: Curves.easeOut
+    );
+    _iconAnimation.addListener(()=> this.setState(() {}));
+    _iconAnimationController.forward();
+  }
+
+  @override
+  Widget build(BuildContext context){
+    return new Scaffold(
+      backgroundColor: Colors.black26,
+      body: new Stack(
+        fit: StackFit.expand,
+        children: <Widget>[
+          new Image(
+            image: new AssetImage("assets/logo.jpg"),
+            fit: BoxFit.cover,
+            color: Colors.black87,
+            colorBlendMode: BlendMode.darken,
+          ),
+          new Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+           children: <Widget>[
+             new FlutterLogo(
+               size:100.0,
+             ),
+             new Form(
+               child: new Theme(
+                 data: new ThemeData(brightness: Brightness.dark, primarySwatch: Colors.teal,
+                     inputDecorationTheme: new InputDecorationTheme(labelStyle: new TextStyle(
+                       color:Colors.teal, fontSize: 20.0
+                     )) ),
+                 child: new Container(
+                 padding: const EdgeInsets.all(40.0),
+                  child: new Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                new TextFormField(
+                  decoration: new InputDecoration(
+                    labelText: "Email :",
+                  ),
+                  keyboardType: TextInputType.emailAddress,
+                      ),
+                new TextFormField(
+                  decoration: new InputDecoration(
+                    labelText: "Senha :",
+                  ),
+                  keyboardType: TextInputType.text,
+                  obscureText: true,
+                ),
+                new Padding(
+                  padding: const EdgeInsets.only(top:20.0),
+                ),
+                new MaterialButton(
+                  height: 40.0,
+                  minWidth: 100.0,
+                  color: Colors.teal,
+                  textColor: Colors.white,
+                  child: new Text("Login"),
+                  onPressed: () {
+                    Navigator.of(context).pushNamed('/homepage');
+                  },
+                  splashColor: Colors.redAccent,
+                )
+                    ],
+                  ),
+                  )
+                 )
+                )
+              ]
+            ),
+          ],
+        ),
       );
   }
 }
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget{
+  @override
+  State<StatefulWidget> createState(){
+    return HomePageState();
+  }
+}
+
+class HomePageState extends State<HomePage>{
+  int _selectedPage = 2;
+  final _pageOptions = [
+    CardapioPage(),
+    TransferPage(),
+    MyHomePage(),
+    MetodoPage(),
+    HistoryPage(),
+    CompraPage(),
+    AdicaoPage()
+  ];
+
   @override
   Widget build(BuildContext context) {
-    return new Scaffold(
-      appBar: new AppBar(
-        title: new Text("Uniticket"),
-        elevation: defaultTargetPlatform == TargetPlatform.android?5.0:00,
+    return MaterialApp(
+      title: 'Home',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
       ),
-      drawer: new Drawer(
-        child: new ListView(
-          children: <Widget>[
-            new UserAccountsDrawerHeader(
-              accountName: new Text("Mateus Tenorio"),
-              accountEmail: new Text("ra99829@uem.br"),
-              currentAccountPicture: new CircleAvatar(
-                backgroundColor: Colors.white,
-                child: new Text("T"),
-              ),
+      home: Scaffold(
+        appBar: AppBar(
+          title: new Text("Uniticket"),
+        ),
+        body: _pageOptions[_selectedPage],
+        bottomNavigationBar: BottomNavigationBar(
+          type: BottomNavigationBarType.fixed,
+          currentIndex: _selectedPage,
+            onTap: (int index){
+            setState((){
+              _selectedPage = index;
+            });
+            },
+          items: [
+            BottomNavigationBarItem(
+              icon: Icon(Icons.restaurant),
+              title: Text('Cardápio')
             ),
-            new ListTile(
-              title: new Text("Cardápio"),
-              trailing: new Icon(Icons.restaurant_menu),
-              onTap: () {
-                Navigator.of(context).pop();
-                Navigator.of(context).push(new MaterialPageRoute(builder: (BuildContext context)=>new CardapioPage("Cardapio")));
-              },
+            BottomNavigationBarItem(
+                icon: Icon(Icons.money_off),
+                title: Text('Transferência')
             ),
-            new ListTile(
-              title: new Text("Comprar Tickets"),
-              trailing: new Icon(Icons.money_off),
-              onTap: () {
-                Navigator.of(context).pop();
-                Navigator.of(context).push(new MaterialPageRoute(builder: (BuildContext context)=>new CompraPage("Comprar Tickets")));
-              },
+            BottomNavigationBarItem(
+                icon: Icon(Icons.home),
+                title: Text('Home')
             ),
-            new ListTile(
-              title: new Text("Transferencia"),
-              trailing: new Icon(Icons.people),
-              onTap: () {
-                Navigator.of(context).pop();
-                Navigator.of(context).push(new MaterialPageRoute(builder: (BuildContext context)=>new TransferPage("Transferir Tickets")));
-              },
+            BottomNavigationBarItem(
+                icon: Icon(Icons.credit_card),
+                title: Text('Metodo')
             ),
-            new ListTile(
-              title: new Text("Histórico"),
-              trailing: new Icon(Icons.history),
-              onTap: () {
-                Navigator.of(context).pop();
-                Navigator.of(context).push(new MaterialPageRoute(builder: (BuildContext context)=>new HistoryPage("Histórico")));
-              },
+            BottomNavigationBarItem(
+                icon: Icon(Icons.receipt),
+                title: Text('Histórico')
             ),
-            new ListTile(
-              title: new Text("Pagamento"),
-              trailing: new Icon(Icons.credit_card),
-              onTap: () {
-                Navigator.of(context).pop();
-                Navigator.of(context).push(new MaterialPageRoute(builder: (BuildContext context)=>new MetodoPage("Métodos Pagamento")));
-              },
+            BottomNavigationBarItem(
+                icon: Icon(Icons.money_off),
+                title: Text('Compra_Ticket')
             ),
-            new Divider(),
-            /*new ListTile(
-              title: new Text("Relatórios"),
-              trailing: new Icon(Icons.pie_chart),
-              onTap: () {
-                Navigator.of(context).pop();
-                Navigator.of(context).push(new MaterialPageRoute(builder: (BuildContext context)=>new RelatorioPage("Relatórios")));
-              },
-            ),*/
-            new ListTile(
-              title: new Text("Adição Cardapio"),
-              trailing: new Icon(Icons.edit),
-              onTap: () {
-                Navigator.of(context).pop();
-                Navigator.of(context).push(new MaterialPageRoute(builder: (BuildContext context)=>new AdicaoPage("Adição Cardápio")));
-              },
-            ),
-            new ListTile(
-              title: new Text("Close"),
-              trailing: new Icon(Icons.close),
-              onTap: ()=> Navigator.of(context).pop(),
+            BottomNavigationBarItem(
+                icon: Icon(Icons.receipt),
+                title: Text('Histórico')
             ),
           ],
         ),
       ),
-      body: new Text("Quantidade de Tickets = 20"),
-      //new QrImage(
-        //data: "4",
-        //size: 200.0,
     );
   }
 }

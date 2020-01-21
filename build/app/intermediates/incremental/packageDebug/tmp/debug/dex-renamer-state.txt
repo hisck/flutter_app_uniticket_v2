@@ -1,4 +1,4 @@
-#Sun Aug 25 22:04:25 BRT 2019
+#Mon Jan 13 22:39:53 BRST 2020
 base.0=/home/tenorio/AndroidStudioProjects/flutter_app_uniticket_v2/build/app/intermediates/transforms/dexMerger/debug/0
 path.0=classes.dex
 renamed.0=classes.dex
