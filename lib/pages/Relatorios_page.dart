@@ -1,19 +1,46 @@
+import 'dart:async';
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 
 class RelatorioPage extends StatelessWidget {
-  final String title;
+ 
+  List data;
 
-  RelatorioPage(this.title);
+  Future<String> getData() async{
+    var response = await http.get(
+      Uri.encodeFull(""),
+      headers: {
+        "Accept" : "application/json"
+      }
+    );
+
+    this.setState((){
+      data = json.decode(response.body);
+    });
+    
+    print(data[1]["title"]);
+
+    return "Sucess!";
+  }
 
   @override
-  Widget build(BuildContext context) {
+  void initState(){
+    this.getData();
+  }
+
+  @override
+  Widget build(BuildContext context){
     return new Scaffold(
-      appBar: new AppBar(
-        title: new Text(title),
-      ),
-      body: new Center(
-        child: new Text(title),
-      ),
-    );
+      body: new ListView.builder(
+        itemCount: data == null ? 0 : data.lenght,
+        itemBuilder : (BuildContext context, int index){
+          return new Card(
+            child: new Text(data[index]["title"]),
+          );
+        }
+      )
+    ),
   }
 }

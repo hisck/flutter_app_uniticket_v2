@@ -1,26 +1,46 @@
+import 'dart:async';
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
-import 'package:flutter_app_uniticket_v2/components/cardapio_model.dart';
-import 'package:flutter_app_uniticket_v2/components/cardapio_list.dart';
+import 'package:http/http.dart' as http;
 
 class CardapioPage extends StatelessWidget {
+ 
+  List data;
 
-  CardapioPage();
+  Future<String> getData() async{
+    var response = await http.get(
+      Uri.encodeFull(""),
+      headers: {
+        "Accept" : "application/json"
+      }
+    );
 
-  List<Cardapio> initialCardapio = []
-  ..add(Cardapio('Strogonofe de Frango', 'Arroz Branco/Integral', 'Feijão Carioca', 'Salada de tomate', 'Grão de Bico c/ PTS', 'Gelatina', 'Segunda-Feira'))
-  ..add(Cardapio('Strogonofe de Frango', 'Arroz Branco/Integral', 'Feijão Carioca', 'Salada de tomate', 'Grão de Bico c/ PTS', 'Gelatina', 'Terça-Feira'))
-  ..add(Cardapio('Strogonofe de Frango', 'Arroz Branco/Integral', 'Feijão Carioca', 'Salada de tomate', 'Grão de Bico c/ PTS', 'Gelatina', 'Quarta-Feira'))
-  ..add(Cardapio('Strogonofe de Frango', 'Arroz Branco/Integral', 'Feijão Carioca', 'Salada de tomate', 'Grão de Bico c/ PTS', 'Gelatina', 'Quinta-Feira'))
-  ..add(Cardapio('Strogonofe de Frango', 'Arroz Branco/Integral', 'Feijão Carioca', 'Salada de tomate', 'Grão de Bico c/ PTS', 'Gelatina', 'Sexta-Feira'));
+    this.setState((){
+      data = json.decode(response.body);
+    });
+    
+    print(data[1]["title"]);
+
+    return "Sucess!";
+  }
 
   @override
-  Widget build(BuildContext context) {
+  void initState(){
+    this.getData();
+  }
+
+  @override
+  Widget build(BuildContext context){
     return new Scaffold(
-      body: Container(
-        child: Center(
-          child: CardapioList(initialCardapio),
-        ),
-      ),
-    );
+      body: new ListView.builder(
+        itemCount: data == null ? 0 : data.lenght,
+        itemBuilder : (BuildContext context, int index){
+          return new Card(
+            child: new Text(data[index]["title"]),
+          );
+        }
+      )
+    ),
   }
 }
