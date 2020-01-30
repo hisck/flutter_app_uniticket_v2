@@ -19,8 +19,6 @@ class RelatorioPage extends StatelessWidget {
     this.setState((){
       data = json.decode(response.body);
     });
-    
-    print(data[1]["title"]);
 
     return "Sucess!";
   }
